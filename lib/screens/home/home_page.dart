@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'screens/done_screen.dart';
-import 'screens/task_screen.dart';
-import 'shared/models/todo_item.dart';
+import 'package:ignite_flutter_todo_list/screens/home/home_controller.dart';
+
+import 'package:ignite_flutter_todo_list/screens/done_screen.dart';
+import 'package:ignite_flutter_todo_list/screens/task_screen.dart';
+
+import 'package:ignite_flutter_todo_list/shared/models/todo_item.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,8 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _toDoItemList = <ToDoItem>[];
-  final _doneItemList = <ToDoItem>[];
+  final controller = HomeController();
 
   final _pageViewController = PageController(
     initialPage: 0,
@@ -19,53 +21,6 @@ class _HomePageState extends State<HomePage> {
   );
 
   var _selectedIndex = 0;
-
-  void onAddItem(String itemTitle) {
-    setState(() {
-      _toDoItemList.add(
-        ToDoItem(
-          title: itemTitle,
-        ),
-      );
-    });
-  }
-
-  void onResetItem(ToDoItem item) {
-    setState(() {
-      _doneItemList.remove(item);
-
-      _toDoItemList.add(
-        ToDoItem(
-          title: item.title,
-        ),
-      );
-    });
-  }
-
-  void onRemoveToDoItem(ToDoItem item) {
-    setState(() {
-      _toDoItemList.remove(item);
-    });
-  }
-
-  void onRemoveDoneItem(ToDoItem item) {
-    setState(() {
-      _doneItemList.remove(item);
-    });
-  }
-
-  void onCompleteItem(ToDoItem item) {
-    setState(() {
-      _toDoItemList.remove(item);
-
-      _doneItemList.add(
-        ToDoItem(
-          title: item.title,
-          isDone: true,
-        ),
-      );
-    });
-  }
 
   @override
   void dispose() {
@@ -81,15 +36,16 @@ class _HomePageState extends State<HomePage> {
         controller: _pageViewController,
         children: <Widget>[
           TaskScreen(
-            itemList: _toDoItemList,
-            onAddItem: onAddItem,
-            onCompleteItem: onCompleteItem,
-            onRemoveItem: onRemoveToDoItem,
+            itemList: controller.todoItemList,
+            onAddItem: controller.onAddItem,
+            onCompleteItem: controller.onCompleteItem,
+            onRemoveItem: controller.onRemoveToDoItem,
+            homeController: controller,
           ),
           DoneScreen(
-            itemList: _doneItemList,
-            onRemoveItem: onRemoveDoneItem,
-            onResetItem: onResetItem,
+            itemList: controller.doneItemList,
+            onRemoveItem: controller.onRemoveDoneItem,
+            onResetItem: controller.onResetItem,
           ),
         ],
         onPageChanged: (index) {
